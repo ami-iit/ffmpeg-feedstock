@@ -16,15 +16,28 @@ source:
     # https://github.com/FFmpeg/FFmpeg/commit/f8d6d0fbf12b3247a37885cd0a5cd32ddc1f01b3
     # https://github.com/conda-forge/ffmpeg-feedstock/pull/193#issuecomment-1484476264
     - patches/0001-Revert-compat-Use-instead-of-for-rc.exe-options.patch
+    # This needs to be copied in the recipe folder from 
+    # https://github.com/madsciencetist/jetson-ffmpeg/blob/master/ffmpeg_patches/ffmpeg6.0_nvmpi.patch
+    # before the actual build
+    - patches/ffmpeg6.0_nvmpi.patch
 
 {% set build = 1 %}
 {% if license_family == 'gpl' %}
     {% set build = build + 100 %}
 {% endif %}
 
+# Add jetson-ffmpeg offset
+{% set build = build + 1000 %}
+
+# Add jetson-ffmpeg build
+# Bump this if you change the jetson-ffmpeg recipe,
+# And reset to zere once the underlying ffmpeg version
+# or build number is changed
+{% set build = build + 0 %}
+
 build:
   number: {{ build }}
-  string: {{ license_family }}_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
+  string: {{ license_family }}_jetsonffmpeg_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
   run_exports:
   # seems to be major version compatibility
   # https://abi-laboratory.pro/tracker/timeline/ffmpeg/
@@ -73,6 +86,7 @@ requirements:
     - xz
     - libxcb       # [linux]
     - xorg-libx11  # [linux]
+    - nvmpi
 
 {% set grep = "grep" %}    # [unix]
 {% set grep = "findstr" %}  # [win]
@@ -147,7 +161,13 @@ test:
         "mpeg4_cuvid",
         "vc1_cuvid",
         "vp8_cuvid",
-        "vp9_cuvid"
+        "vp9_cuvid",
+        "h264_nvmpi",
+        "hevc_nvmpi",
+        "mpeg2_nvmpi",
+        "mpeg4_nvmpi",
+        "vp8_nvmpi",
+        "vp9_nvmpi"
     ] %}
     {% for nvcodec in nvcodecs %}
     - ffmpeg -hide_banner -codecs | {{ grep }} "{{ nvcodec }}"  # [linux64 or win]
