@@ -17,9 +17,9 @@ source:
     # https://github.com/conda-forge/ffmpeg-feedstock/pull/193#issuecomment-1484476264
     - patches/0001-Revert-compat-Use-instead-of-for-rc.exe-options.patch
     # This needs to be copied in the recipe folder from 
-    # https://github.com/madsciencetist/jetson-ffmpeg/blob/master/ffmpeg_patches/ffmpeg6.0_nvmpi.patch
+    # https://github.com/madsciencetist/jetson-ffmpeg/blob/master/ffmpeg_patches/ffmpeg6.1_nvmpi.patch
     # before the actual build
-    - patches/ffmpeg6.0_nvmpi.patch
+    - patches/ffmpeg6.1_nvmpi.patch
 
 {% set build = 1 %}
 {% if license_family == 'gpl' %}
